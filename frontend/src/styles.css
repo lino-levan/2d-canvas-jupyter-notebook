@@ -2,3 +2,7 @@
 
 /* Add dark mode support */
 @custom-variant dark (&:where(.dark, .dark *));
+
+.react-flow__attribution {
+  display: none !important;
+}

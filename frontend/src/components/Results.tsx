@@ -1,6 +1,18 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-const Results = ({ results }) => {
+export type ResultsType = {
+  error: boolean;
+  output: string | {
+    text_output: string;
+    data: Record<string, string>;
+  };
+};
+
+interface ResultsProps {
+  results: ResultsType;
+}
+
+const Results = ({ results }: ResultsProps) => {
   const [expanded, setExpanded] = useState(true);
 
   if (!results) return null;
@@ -8,7 +20,7 @@ const Results = ({ results }) => {
   // Handle error display
   if (results.error) {
     return (
-      <div className={`p-2 bg-red-50 text-sm`}>
+      <div className="p-2 bg-red-50 text-sm">
         <div className="flex justify-between items-center mb-1">
           <span className="font-medium">Error</span>
           <button
