@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from "react";
 
 const Results = ({ results }) => {
   const [expanded, setExpanded] = useState(true);
@@ -11,11 +11,11 @@ const Results = ({ results }) => {
       <div className={`p-2 bg-red-50 text-sm`}>
         <div className="flex justify-between items-center mb-1">
           <span className="font-medium">Error</span>
-          <button 
+          <button
             className="bg-transparent border-none cursor-pointer text-xs text-gray-500 hover:text-gray-700"
             onClick={() => setExpanded(!expanded)}
           >
-            {expanded ? '▲' : '▼'}
+            {expanded ? "▲" : "▼"}
           </button>
         </div>
         {expanded && (
@@ -32,9 +32,9 @@ const Results = ({ results }) => {
     if (!expanded) return null;
 
     const output = results.output;
-    
+
     // If output is just a string
-    if (typeof output === 'string') {
+    if (typeof output === "string") {
       return (
         <pre className="font-mono whitespace-pre-wrap text-xs m-0 p-2 bg-gray-50 rounded">
           {output}
@@ -44,76 +44,79 @@ const Results = ({ results }) => {
 
     // New format with both text output and rich data
     const elements = [];
-    
+
     // Add text output if present
     if (output.text_output) {
       elements.push(
-        <pre key="text" className="font-mono whitespace-pre-wrap text-xs m-0 p-2 bg-gray-50 rounded mb-2">
+        <pre
+          key="text"
+          className="font-mono whitespace-pre-wrap text-xs m-0 p-2 bg-gray-50 rounded mb-2"
+        >
           {output.text_output}
-        </pre>
+        </pre>,
       );
     }
-    
+
     // Add rich output if present
     if (output.data) {
       const data = output.data;
 
       // Handle image/png output
-      if (data['image/png']) {
+      if (data["image/png"]) {
         elements.push(
-          <img 
+          <img
             key="img"
-            src={`data:image/png;base64,${data['image/png']}`}
+            src={`data:image/png;base64,${data["image/png"]}`}
             alt="Execution result"
             className="max-w-full my-2"
-          />
+          />,
         );
-      }
-      
-      // Handle text/html output
-      else if (data['text/html']) {
+      } // Handle text/html output
+      else if (data["text/html"]) {
         elements.push(
-          <div 
+          <div
             key="html"
             className="p-2 bg-white rounded"
-            dangerouslySetInnerHTML={{ __html: data['text/html'] }}
-          />
+            dangerouslySetInnerHTML={{ __html: data["text/html"] }}
+          />,
         );
-      }
-
-      // Handle application/json output
-      else if (data['application/json']) {
+      } // Handle application/json output
+      else if (data["application/json"]) {
         elements.push(
-          <pre key="json" className="font-mono whitespace-pre-wrap text-xs m-0 p-2 bg-gray-50 rounded">
+          <pre
+            key="json"
+            className="font-mono whitespace-pre-wrap text-xs m-0 p-2 bg-gray-50 rounded"
+          >
             {JSON.stringify(data['application/json'], null, 2)}
-          </pre>
+          </pre>,
         );
-      }
-      
-      // Handle text/plain output (only if no text_output)
-      else if (data['text/plain'] && !output.text_output) {
+      } // Handle text/plain output (only if no text_output)
+      else if (data["text/plain"] && !output.text_output) {
         elements.push(
-          <pre key="plain" className="font-mono whitespace-pre-wrap text-xs m-0 p-2 bg-gray-50 rounded">
+          <pre
+            key="plain"
+            className="font-mono whitespace-pre-wrap text-xs m-0 p-2 bg-gray-50 rounded"
+          >
             {data['text/plain']}
-          </pre>
+          </pre>,
         );
       }
     }
-    
-    return elements.length > 0 ? elements : (
-      <div className="p-2 text-sm text-gray-500">No output</div>
-    );
+
+    return elements.length > 0
+      ? elements
+      : <div className="p-2 text-sm text-gray-500">No output</div>;
   };
 
   return (
     <div className="p-2 text-sm bg-gray-50">
       <div className="flex justify-between items-center mb-1">
         <span className="font-medium">Output</span>
-        <button 
+        <button
           className="bg-transparent border-none cursor-pointer text-xs text-gray-500 hover:text-gray-700"
           onClick={() => setExpanded(!expanded)}
         >
-          {expanded ? '▲' : '▼'}
+          {expanded ? "▲" : "▼"}
         </button>
       </div>
       {renderOutput()}

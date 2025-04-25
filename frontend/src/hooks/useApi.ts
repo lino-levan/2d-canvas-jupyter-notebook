@@ -1,22 +1,22 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_URL = 'http://localhost:8000';
+const API_URL = "http://localhost:8000";
 
 // Create an axios instance
 const api = axios.create({
   baseURL: API_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
 // Fetch the entire workspace (boxes and arrows)
 export const fetchWorkspace = async () => {
   try {
-    const response = await api.get('/workspace');
+    const response = await api.get("/workspace");
     return response.data;
   } catch (error) {
-    console.error('Error fetching workspace:', error);
+    console.error("Error fetching workspace:", error);
     throw error;
   }
 };
@@ -24,10 +24,10 @@ export const fetchWorkspace = async () => {
 // Save the entire workspace
 export const saveWorkspace = async (workspace) => {
   try {
-    const response = await api.post('/workspace', workspace);
+    const response = await api.post("/workspace", workspace);
     return response.data;
   } catch (error) {
-    console.error('Error saving workspace:', error);
+    console.error("Error saving workspace:", error);
     throw error;
   }
 };
@@ -35,14 +35,14 @@ export const saveWorkspace = async (workspace) => {
 // Execute code in a specific box
 export const executeCode = async (boxId, code, ancestors) => {
   try {
-    const response = await api.post('/execute', {
+    const response = await api.post("/execute", {
       boxId,
       code,
       ancestors,
     });
     return response.data;
   } catch (error) {
-    console.error('Error executing code:', error);
+    console.error("Error executing code:", error);
     throw error;
   }
 };
