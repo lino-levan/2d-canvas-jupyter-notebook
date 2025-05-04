@@ -187,11 +187,48 @@ function App() {
   /**
    * Execute code in a node and update results
    */
+  /**
+   * Execute code in a node and update results
+   */
   const handleExecuteCode = useCallback(
     async (boxId: string, code: string) => {
       try {
-        const { executeCode } = await import("./hooks/useApi");
+        // First, explicitly save the workspace
+        const { saveWorkspace, executeCode } = await import("./hooks/useApi");
+
+        // Clear any pending auto-save timeout
+        if (saveTimeoutRef.current !== null) {
+          window.clearTimeout(saveTimeoutRef.current);
+          saveTimeoutRef.current = null;
+        }
+
+        // Transform ReactFlow nodes to backend format
+        const boxes = nodeRef.current.map((node) => ({
+          id: node.id,
+          x: node.position.x,
+          y: node.position.y,
+          width: node.data.width,
+          height: node.data.height,
+          content: node.data.content,
+          results: node.data.results,
+        }));
+
+        // Transform ReactFlow edges to backend format
+        const arrows = edgeRef.current.map((edge) => ({
+          id: edge.id,
+          start: edge.source,
+          end: edge.target,
+        }));
+
+        // Set saving indicator
+        setSaving(true);
+
+        // Save the workspace immediately
+        await saveWorkspace({ boxes, arrows });
+
+        // Now execute the code
         const results = await executeCode(boxId, code);
+        setSaving(false);
 
         setNodes((prevNodes) =>
           prevNodes.map((node) => {
@@ -209,6 +246,7 @@ function App() {
         );
       } catch (err: any) {
         console.error("Execution failed:", err);
+        setSaving(false);
 
         setNodes((prevNodes) =>
           prevNodes.map((node) => {

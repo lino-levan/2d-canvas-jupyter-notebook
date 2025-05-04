@@ -13,7 +13,7 @@ interface CodeBoxNodeProps {
     height: number;
     content: string;
     results: ResultsType;
-    onExecute: (id: string, content: string) => void;
+    onExecute: (id: string, content: string) => Promise<void>;
     onContentChange: (content: string) => void;
     onResize: (width: number, height: number) => void;
     onEditorFocus?: (isFocused: boolean) => void;
@@ -48,8 +48,11 @@ const CodeBoxNode = memo(({ id, data, selected }: CodeBoxNodeProps) => {
 
   // Execute the code
   const executeCode = useCallback(() => {
-    data.onExecute(id, content);
-    editorRef.current?.layout();
+    data.onExecute(id, content).then(() => {
+      if (!data.results) {
+        editorRef.current?.layout({ width: 0, height: 0 });
+      }
+    });
   }, [id, content, data]);
 
   return (
