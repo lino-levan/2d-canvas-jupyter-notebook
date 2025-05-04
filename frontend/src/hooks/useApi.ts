@@ -22,7 +22,7 @@ export const fetchWorkspace = async () => {
 };
 
 // Save the entire workspace
-export const saveWorkspace = async (workspace) => {
+export const saveWorkspace = async (workspace: any) => {
   try {
     const response = await api.post("/workspace", workspace);
     return response.data;
@@ -33,7 +33,11 @@ export const saveWorkspace = async (workspace) => {
 };
 
 // Execute code in a specific box
-export const executeCode = async (boxId, code, ancestors) => {
+export const executeCode = async (
+  boxId: string,
+  code: string,
+  ancestors: any[],
+) => {
   try {
     const response = await api.post("/execute", {
       boxId,
