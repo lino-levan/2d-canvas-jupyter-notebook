@@ -17,25 +17,25 @@ import matplotlib.pyplot as plt
 class CodeExecutor:
     def __init__(self):
         self.global_env = {}
-        
+
     def reset_environment(self):
         """Reset the execution environment."""
         self.global_env = {}
-        
+
     def prepare_environment(self, ancestors: List[Ancestor]):
         """Prepare the execution environment by running ancestor code."""
         # Reset environment first
         self.reset_environment()
-        
+
         # Execute each ancestor code in order
         for ancestor in ancestors:
             try:
                 self._execute_code(ancestor.content, self.global_env)
             except Exception as e:
                 print(f"Warning: Ancestor {ancestor.id} execution failed: {str(e)}")
-                
+
         return self.global_env
-        
+
     def execute(self, code: str, ancestors: List[Ancestor] = None) -> Dict[str, Any]:
         """Execute the provided Python code with the given ancestors."""
         if ancestors:
@@ -45,26 +45,26 @@ class CodeExecutor:
             # Start with a fresh environment
             self.reset_environment()
             env = self.global_env
-            
+
         # Execute the code
         try:
             stdout = io.StringIO()
             stderr = io.StringIO()
-            
+
             with redirect_stdout(stdout), redirect_stderr(stderr):
                 last_expr = self._execute_code(code, env)
-                
+
             # Get stdout/stderr output
             stdout_output = stdout.getvalue()
             stderr_output = stderr.getvalue()
-            
+
             # Combine stdout and stderr for text output
             text_output = ""
             if stdout_output:
                 text_output += stdout_output
             if stderr_output:
                 text_output += f"\nError: {stderr_output}"
-            
+
             # Check if the last expression is a matplotlib figure
             if isinstance(last_expr, matplotlib.figure.Figure):
                 # Convert figure to PNG
@@ -73,7 +73,7 @@ class CodeExecutor:
                 buf.seek(0)
                 png_data = buf.getvalue()
                 png_base64 = base64.b64encode(png_data).decode('utf-8')
-                
+
                 return {
                     "output": {
                         "text_output": text_output.strip() if text_output else None,
@@ -81,7 +81,7 @@ class CodeExecutor:
                     },
                     "error": False
                 }
-            
+
             # Check for objects with HTML representation (like pandas DataFrame)
             elif hasattr(last_expr, '_repr_html_'):
                 html = last_expr._repr_html_()
@@ -92,7 +92,7 @@ class CodeExecutor:
                     },
                     "error": False
                 }
-            
+
             # For regular results
             elif last_expr is not None:
                 # Handle other objects
@@ -103,48 +103,110 @@ class CodeExecutor:
                     },
                     "error": False
                 }
-            
+
             # No last expression value, just text output
             else:
                 return {
                     "output": text_output.strip(),
                     "error": False
                 }
-            
+
         except Exception as e:
             # Handle execution errors
             error_msg = f"{type(e).__name__}: {str(e)}\n"
             error_msg += traceback.format_exc()
             return {"output": error_msg, "error": True}
-    
+
     def _execute_code(self, code: str, env: Dict[str, Any]) -> Any:
         """Execute the code and return the result of the last expression if any."""
         # Create a variable to store the last expression result
         env['_last_expr_result'] = None
-        
+
         # Check if the last statement is an expression
         try:
             parsed = ast.parse(code)
             last_node = parsed.body[-1] if parsed.body else None
-            
+
             if isinstance(last_node, ast.Expr):
                 # Modify the code to capture the last expression result
                 last_line_no = last_node.lineno
                 lines = code.splitlines()
-                
+
                 # Replace the last expression with an assignment to our special variable
                 if last_line_no <= len(lines):
                     last_line = lines[last_line_no - 1]
                     lines[last_line_no - 1] = f"_last_expr_result = {last_line}"
                     modified_code = "\n".join(lines)
-                    
+
                     # Execute the modified code
                     exec(modified_code, env)
                     return env.get('_last_expr_result')
         except:
             # If there's any issue with AST parsing, fall back to normal execution
             pass
-        
+
         # If we couldn't modify the code or it wasn't an expression, execute normally
         exec(code, env)
         return None
+
+    def execute_with_dependencies(self, box_id: str, code: str, boxes: List[Dict], arrows: List[Dict]) -> Dict[str, Any]:
+        """Execute code with dependencies determined from the DAG structure"""
+
+        # Build the graph
+        graph = {}
+        for box in boxes:
+            graph[box['id']] = []
+
+        # Add edges (parents of each node)
+        for arrow in arrows:
+            if arrow['end'] in graph:
+                graph[arrow['end']].append(arrow['start'])
+
+        # Perform topological sort
+        ancestor_ids = self._topological_sort(graph, box_id)
+
+        # Map ancestor IDs to Ancestor objects
+        ancestors = []
+        for ancestor_id in ancestor_ids:
+            for box in boxes:
+                if box['id'] == ancestor_id:
+                    ancestors.append(Ancestor(
+                        id=box['id'],
+                        content=box['content'],
+                        results=box.get('results')
+                    ))
+                    break
+
+        # Execute with the properly ordered ancestors
+        return self.execute(code, ancestors)
+
+    def _topological_sort(self, graph: Dict[str, List[str]], node_id: str) -> List[str]:
+        """Perform topological sort to get ancestors in execution order"""
+        visited = set()
+        temp = set()
+        result = []
+
+        def dfs(node):
+            if node in visited:
+                return True
+            if node in temp:
+                raise ValueError(f"Cycle detected in dependency graph at node {node}")
+
+            temp.add(node)
+
+            # Process all parents first
+            for parent in graph.get(node, []):
+                if not dfs(parent):
+                    return False
+
+            temp.remove(node)
+            visited.add(node)
+
+            # Add to result if it's not the target node
+            if node != node_id:
+                result.append(node)
+
+            return True
+
+        dfs(node_id)
+        return result

@@ -33,16 +33,11 @@ export const saveWorkspace = async (workspace: any) => {
 };
 
 // Execute code in a specific box
-export const executeCode = async (
-  boxId: string,
-  code: string,
-  ancestors: any[],
-) => {
+export const executeCode = async (boxId: string, code: string) => {
   try {
     const response = await api.post("/execute", {
       boxId,
       code,
-      ancestors,
     });
     return response.data;
   } catch (error) {

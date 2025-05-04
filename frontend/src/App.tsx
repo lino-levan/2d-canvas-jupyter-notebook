@@ -191,34 +191,8 @@ function App() {
     async (boxId: string, code: string) => {
       try {
         const { executeCode } = await import("./hooks/useApi");
-        const nodes = nodeRef.current;
-        const edges = edgeRef.current;
+        const results = await executeCode(boxId, code);
 
-        // Get ancestors for this box
-        const boxNodes = nodes.map((node) => ({
-          id: node.id,
-          x: node.position.x,
-          y: node.position.y,
-          width: node.data.width,
-          height: node.data.height,
-          content: node.data.content,
-          results: node.data.results,
-        }));
-
-        const arrowConnections = edges.map((edge) => ({
-          id: edge.id,
-          start: edge.source,
-          end: edge.target,
-        }));
-
-        const ancestors = LinkingManager.getAncestors(
-          boxId,
-          arrowConnections,
-          boxNodes,
-        );
-        const results = await executeCode(boxId, code, ancestors);
-
-        // Update using functional state update
         setNodes((prevNodes) =>
           prevNodes.map((node) => {
             if (node.id === boxId) {
@@ -236,7 +210,6 @@ function App() {
       } catch (err: any) {
         console.error("Execution failed:", err);
 
-        // Also update this error handler with functional update
         setNodes((prevNodes) =>
           prevNodes.map((node) => {
             if (node.id === boxId) {

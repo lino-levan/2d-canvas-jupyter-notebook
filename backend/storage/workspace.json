@@ -148,6 +148,48 @@
         "output": "Hello, World!\nHello, World!\nHello, World!\nHello, World!\nHello, World!\nHello, World!\nHello, World!\nHello, World!\nHello, World!\nHello, World!",
         "error": false
       }
+    },
+    {
+      "id": "box-1746372219976-35",
+      "x": -1100.0,
+      "y": -600.0,
+      "width": 500.0,
+      "height": 400.0,
+      "content": "x = 10\nflag = False",
+      "results": null
+    },
+    {
+      "id": "box-1746372229709-160",
+      "x": -1560.0,
+      "y": -80.0,
+      "width": 500.0,
+      "height": 400.0,
+      "content": "x = 20\ny = 30\nprint(\"Hello, World!\", x)",
+      "results": null
+    },
+    {
+      "id": "box-1746372233843-334",
+      "x": -780.0,
+      "y": -80.0,
+      "width": 500.0,
+      "height": 400.0,
+      "content": "if x == 20:\n    flag = True\n    print(\"WHATTT\")\n\n# New Python Code\nprint(\"Hello, Worlds!\")",
+      "results": {
+        "output": "Hello, Worlds!",
+        "error": false
+      }
+    },
+    {
+      "id": "box-1746372239959-99",
+      "x": -1120.0,
+      "y": 540.0,
+      "width": 500.0,
+      "height": 420.0,
+      "content": "# New Python Code\nprint(\"Hello, World!\", flag)",
+      "results": {
+        "output": "Hello, World! True",
+        "error": false
+      }
     }
   ],
   "arrows": [
@@ -190,6 +232,26 @@
       "id": "arrow-1746327867808-556",
       "start": "box-1745539247192-copy-1746327862123-847-copy-1746327863947-671",
       "end": "box-1745547805861-743"
+    },
+    {
+      "id": "arrow-1746372245944-794",
+      "start": "box-1746372219976-35",
+      "end": "box-1746372229709-160"
+    },
+    {
+      "id": "arrow-1746372249277-405",
+      "start": "box-1746372219976-35",
+      "end": "box-1746372233843-334"
+    },
+    {
+      "id": "arrow-1746372255061-434",
+      "start": "box-1746372229709-160",
+      "end": "box-1746372239959-99"
+    },
+    {
+      "id": "arrow-1746372258710-822",
+      "start": "box-1746372233843-334",
+      "end": "box-1746372239959-99"
     }
   ]
 }

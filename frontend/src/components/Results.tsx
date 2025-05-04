@@ -5,9 +5,9 @@ export type ResultsType = {
   output:
     | string
     | {
-        text_output: string;
-        data: Record<string, string>;
-      };
+      text_output: string;
+      data: Record<string, string>;
+    };
 };
 
 interface ResultsProps {
@@ -125,11 +125,9 @@ const Results = ({ results, onExpand }: ResultsProps) => {
       }
     }
 
-    return elements.length > 0 ? (
-      elements
-    ) : (
-      <div className="p-2 text-sm text-gray-500">No output</div>
-    );
+    return elements.length > 0
+      ? elements
+      : <div className="p-2 text-sm text-gray-500">No output</div>;
   };
 
   return (

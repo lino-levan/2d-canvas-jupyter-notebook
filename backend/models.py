@@ -27,7 +27,6 @@ class Ancestor(BaseModel):
 class ExecutionRequest(BaseModel):
     boxId: str
     code: str
-    ancestors: List[Ancestor]
 
 class ExecutionResult(BaseModel):
     output: Any

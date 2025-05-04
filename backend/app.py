@@ -67,8 +67,16 @@ async def update_workspace(workspace: Workspace):
 async def execute_code(request: ExecutionRequest):
     """Execute Python code"""
     try:
+        # Load current workspace
+        workspace = load_workspace_from_file()
+
         # Execute the code
-        result = executor.execute(request.code, request.ancestors)
+        result = executor.execute_with_dependencies(
+            request.boxId,
+            request.code,
+            workspace["boxes"],
+            workspace["arrows"]
+        )
         return result
     except Exception as e:
         # Return error information
