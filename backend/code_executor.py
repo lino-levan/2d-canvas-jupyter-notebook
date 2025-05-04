@@ -34,8 +34,8 @@ class CodeExecutor:
             graph[box['id']] = []
 
         for arrow in arrows:
-            if arrow['end'] in graph:
-                graph[arrow['end']].append(arrow['start'])
+            if arrow['target'] in graph:
+                graph[arrow['target']].append(arrow['source'])
 
         # Find the box we're executing
         target_box = next((box for box in boxes if box['id'] == box_id), None)

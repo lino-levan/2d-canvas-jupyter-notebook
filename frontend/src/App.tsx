@@ -219,8 +219,8 @@ function App() {
         // Transform ReactFlow edges to backend format
         const arrows = edgeRef.current.map((edge) => ({
           id: edge.id,
-          start: edge.source,
-          end: edge.target,
+          source: edge.source,
+          target: edge.target,
         }));
 
         // Set saving indicator
@@ -589,8 +589,8 @@ function App() {
         // Transform arrows into ReactFlow edges format
         const flowEdges = workspace.arrows.map((arrow) => ({
           id: arrow.id,
-          source: arrow.start,
-          target: arrow.end,
+          source: arrow.source,
+          target: arrow.target,
           markerEnd: {
             type: MarkerType.ArrowClosed,
             width: 20,
@@ -651,8 +651,8 @@ function App() {
           // Transform ReactFlow edges back to our backend format
           const arrows = edges.map((edge) => ({
             id: edge.id,
-            start: edge.source,
-            end: edge.target,
+            source: edge.source,
+            target: edge.target,
           }));
 
           await saveWorkspace({ boxes, arrows });

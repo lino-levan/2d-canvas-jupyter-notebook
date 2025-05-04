@@ -12,8 +12,8 @@ class Box(BaseModel):
 
 class Arrow(BaseModel):
     id: str
-    start: str
-    end: str
+    source: str
+    target: str
 
 class Workspace(BaseModel):
     boxes: List[Box]
