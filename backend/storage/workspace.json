@@ -141,11 +141,11 @@
       "id": "box-1745539247192-copy-1746327862123-847-copy-1746327863947-671",
       "x": 1540.0,
       "y": 1740.0,
-      "width": 500.0,
-      "height": 380.0,
-      "content": "# New Python Code\nprint(\"Hello, World!\")\nprint(\"Hello, World!\")\nprint(\"Hello, World!\")\nprint(\"Hello, World!\")\nprint(\"Hello, World!\")\n",
+      "width": 420.0,
+      "height": 360.0,
+      "content": "# New Python Code\nprint(\"Hello, World!\")\nprint(\"Hello, World!\")\nprint(\"Hello, World!\")\nprint(\"Hello, World!\")\nprint(\"Hello, World!\")\nprint(\"Hello, World!\")\nprint(\"Hello, World!\")\nprint(\"Hello, World!\")\nprint(\"Hello, World!\")\nprint(\"Hello, World!\")\n",
       "results": {
-        "output": "Hello, World!\nHello, World!\nHello, World!\nHello, World!\nHello, World!",
+        "output": "Hello, World!\nHello, World!\nHello, World!\nHello, World!\nHello, World!\nHello, World!\nHello, World!\nHello, World!\nHello, World!\nHello, World!",
         "error": false
       }
     }

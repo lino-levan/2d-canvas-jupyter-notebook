@@ -52,26 +52,6 @@ const CodeBoxNode = memo(({ id, data, selected }: CodeBoxNodeProps) => {
     editorRef.current?.layout();
   }, [id, content, data]);
 
-  /**
-   * Handle editor focus event - notify parent component
-   * This prevents clipboard operations from interfering with text editing
-   */
-  const handleEditorFocus = useCallback(() => {
-    if (data.onEditorFocus) {
-      data.onEditorFocus(true);
-    }
-  }, [data]);
-
-  /**
-   * Handle editor blur event - notify parent component
-   * This re-enables clipboard operations for nodes
-   */
-  const handleEditorBlur = useCallback(() => {
-    if (data.onEditorFocus) {
-      data.onEditorFocus(false);
-    }
-  }, [data]);
-
   return (
     <div className="relative" ref={nodeRef}>
       {/* Node Toolbar that appears when selected */}
@@ -96,7 +76,7 @@ const CodeBoxNode = memo(({ id, data, selected }: CodeBoxNodeProps) => {
         handleClassName="h-3 w-3 bg-white border-2 border-blue-500 rounded"
         onResize={(_, params) => {
           data.onResize(params.width, params.height);
-          editorRef.current?.layout();
+          editorRef.current?.layout({ width: 0, height: 0 });
         }}
       />
 
@@ -143,15 +123,18 @@ const CodeBoxNode = memo(({ id, data, selected }: CodeBoxNodeProps) => {
             onMount={(editor) => {
               editorRef.current = editor;
             }}
-            onFocus={handleEditorFocus}
-            onBlur={handleEditorBlur}
           />
         </div>
 
         {/* Results area */}
         {data.results && (
           <div className="border-t border-gray-200 overflow-auto flex-shrink-0">
-            <Results results={data.results} />
+            <Results
+              results={data.results}
+              onExpand={() => {
+                editorRef.current?.layout({ width: 0, height: 0 });
+              }}
+            />
           </div>
         )}
       </div>

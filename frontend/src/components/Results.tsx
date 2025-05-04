@@ -2,18 +2,26 @@ import { useState } from "react";
 
 export type ResultsType = {
   error: boolean;
-  output: string | {
-    text_output: string;
-    data: Record<string, string>;
-  };
+  output:
+    | string
+    | {
+      text_output: string;
+      data: Record<string, string>;
+    };
 };
 
 interface ResultsProps {
   results: ResultsType;
+  onExpand?: (expanded: boolean) => void;
 }
 
-const Results = ({ results }: ResultsProps) => {
-  const [expanded, setExpanded] = useState(true);
+const Results = ({ results, onExpand }: ResultsProps) => {
+  const [expanded, setRealExpanded] = useState(true);
+
+  const setExpanded = (expanded: boolean) => {
+    setRealExpanded(expanded);
+    onExpand(expanded);
+  };
 
   if (!results) return null;
 
@@ -32,7 +40,9 @@ const Results = ({ results }: ResultsProps) => {
         </div>
         {expanded && (
           <pre className="font-mono whitespace-pre-wrap text-xs m-0 p-1 bg-red-50/80 rounded text-[#e74c3c]">
-            {typeof results.output === 'string' ? results.output : JSON.stringify(results.output)}
+            {typeof results.output === "string"
+              ? results.output
+              : JSON.stringify(results.output)}
           </pre>
         )}
       </div>
@@ -99,7 +109,7 @@ const Results = ({ results }: ResultsProps) => {
             key="json"
             className="font-mono whitespace-pre-wrap text-xs m-0 p-2 bg-gray-50 rounded"
           >
-            {JSON.stringify(data['application/json'], null, 2)}
+            {JSON.stringify(data["application/json"], null, 2)}
           </pre>,
         );
       } // Handle text/plain output (only if no text_output)
@@ -109,7 +119,7 @@ const Results = ({ results }: ResultsProps) => {
             key="plain"
             className="font-mono whitespace-pre-wrap text-xs m-0 p-2 bg-gray-50 rounded"
           >
-            {data['text/plain']}
+            {data["text/plain"]}
           </pre>,
         );
       }
