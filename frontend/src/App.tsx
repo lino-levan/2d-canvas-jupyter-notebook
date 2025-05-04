@@ -66,25 +66,23 @@ function App() {
    */
   const onConnect = useCallback(
     (params) => {
-      // Check for circular dependencies
-      if (
-        LinkingManager.isCircularDependency(params.source, params.target, edges)
-      ) {
-        console.log("Circular dependency detected");
-        setError("Cannot create circular dependency");
-        return;
-      }
-
       // Check for duplicate connections
       if (
         LinkingManager.isDuplicateArrow(params.source, params.target, edges)
       ) {
-        console.log("Connection already exists");
-        setError("Connection already exists");
+        setError(
+          "Connection already exists. If you meant to delete the connection, click on the connection and press the delete key.",
+        );
         return;
       }
 
-      console.log("Connecting nodes:", params.source, params.target);
+      // Check for circular dependencies
+      if (
+        LinkingManager.isCircularDependency(params.source, params.target, edges)
+      ) {
+        setError("Cannot create circular dependency");
+        return;
+      }
 
       // Add the new edge with our custom styling
       setEdges((eds) =>

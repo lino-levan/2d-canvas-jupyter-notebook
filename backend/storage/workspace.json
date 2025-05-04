@@ -176,7 +176,7 @@
     {
       "id": "box-1746372239959-99",
       "x": -1180.0,
-      "y": 380.0,
+      "y": 420.0,
       "width": 500.0,
       "height": 420.0,
       "content": "# New Python Code\nprint(\"Hello, World!\", flag, x, y)",
