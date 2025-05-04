@@ -151,8 +151,8 @@
     },
     {
       "id": "box-1746372219976-35",
-      "x": -1100.0,
-      "y": -600.0,
+      "x": -1180.0,
+      "y": -560.0,
       "width": 500.0,
       "height": 400.0,
       "content": "x = 10\nflag = False",
@@ -165,7 +165,10 @@
       "width": 500.0,
       "height": 400.0,
       "content": "x = 20\ny = 30\nprint(\"Hello, World!\", x)",
-      "results": null
+      "results": {
+        "output": "Hello, World! 20",
+        "error": false
+      }
     },
     {
       "id": "box-1746372233843-334",
@@ -181,13 +184,13 @@
     },
     {
       "id": "box-1746372239959-99",
-      "x": -1120.0,
-      "y": 540.0,
+      "x": -1200.0,
+      "y": 480.0,
       "width": 500.0,
       "height": 420.0,
-      "content": "# New Python Code\nprint(\"Hello, World!\", flag)",
+      "content": "# New Python Code\nprint(\"Hello, World!\", flag, x)",
       "results": {
-        "output": "Hello, World! True",
+        "output": "Hello, World! False 10 30",
         "error": false
       }
     }

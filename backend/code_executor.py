@@ -4,7 +4,7 @@ import traceback
 import json
 import base64
 import ast
-from typing import Dict, Any, List, Tuple
+from typing import Dict, Any, List, Tuple, Set
 from contextlib import redirect_stdout, redirect_stderr
 
 from models import Ancestor
@@ -16,37 +16,111 @@ import matplotlib.pyplot as plt
 
 class CodeExecutor:
     def __init__(self):
-        self.global_env = {}
+        # Cache of execution results to avoid redundant computation
+        self.execution_cache = {}
 
-    def reset_environment(self):
-        """Reset the execution environment."""
-        self.global_env = {}
+    def reset_cache(self):
+        """Reset the execution cache."""
+        self.execution_cache = {}
 
-    def prepare_environment(self, ancestors: List[Ancestor]):
-        """Prepare the execution environment by running ancestor code."""
-        # Reset environment first
-        self.reset_environment()
+    def execute_with_dependencies(self, box_id: str, code: str, boxes: List[Dict], arrows: List[Dict]) -> Dict[str, Any]:
+        """Execute code with dependencies determined from the DAG structure"""
+        # Reset cache for new execution
+        self.reset_cache()
 
-        # Execute each ancestor code in order
-        for ancestor in ancestors:
-            try:
-                self._execute_code(ancestor.content, self.global_env)
-            except Exception as e:
-                print(f"Warning: Ancestor {ancestor.id} execution failed: {str(e)}")
+        # Build the adjacency list (node -> its parents)
+        graph = {}
+        for box in boxes:
+            graph[box['id']] = []
 
-        return self.global_env
+        for arrow in arrows:
+            if arrow['end'] in graph:
+                graph[arrow['end']].append(arrow['start'])
 
-    def execute(self, code: str, ancestors: List[Ancestor] = None) -> Dict[str, Any]:
-        """Execute the provided Python code with the given ancestors."""
-        if ancestors:
-            # Prepare environment with ancestors
-            env = self.prepare_environment(ancestors)
-        else:
-            # Start with a fresh environment
-            self.reset_environment()
-            env = self.global_env
+        # Find the box we're executing
+        target_box = next((box for box in boxes if box['id'] == box_id), None)
+        if not target_box:
+            return {"output": f"Box with ID {box_id} not found", "error": True}
 
-        # Execute the code
+        # Box lookup table for faster access
+        box_lookup = {box['id']: box for box in boxes}
+
+        # Execute the box with its full dependency graph
+        try:
+            # Create execution environment by traversing the DAG
+            env = self._execute_dag_node(box_id, graph, box_lookup, set())
+
+            # Execute the target box with the prepared environment
+            return self._execute_box_code(target_box['content'], env)
+        except Exception as e:
+            error_msg = f"{type(e).__name__}: {str(e)}\n"
+            error_msg += traceback.format_exc()
+            return {"output": error_msg, "error": True}
+
+    def _execute_dag_node(self, node_id: str, graph: Dict[str, List[str]],
+                          box_lookup: Dict[str, Dict], visited: Set[str]) -> Dict[str, Any]:
+        """Recursively execute a node in the DAG and return its environment."""
+        # Check if we've already executed this node
+        if node_id in self.execution_cache:
+            return self.execution_cache[node_id]
+
+        # Detect cycles
+        if node_id in visited:
+            raise ValueError(f"Cycle detected in dependency graph at node {node_id}")
+
+        visited.add(node_id)
+
+        # Get box content
+        if node_id not in box_lookup:
+            raise ValueError(f"Box with ID {node_id} not found in graph")
+
+        box = box_lookup[node_id]
+
+        # Get parents of this node
+        parents = graph.get(node_id, [])
+
+        # Base case: no parents, start with fresh environment
+        if not parents:
+            env = {}
+            result = self._execute_single_box(box['content'], env)
+            self.execution_cache[node_id] = result
+            visited.remove(node_id)
+            return result
+
+        # Recursive case: merge environments from all parents
+        merged_env = {}
+
+        # Execute all parents and merge their environments
+        for parent_id in parents:
+            parent_env = self._execute_dag_node(parent_id, graph, box_lookup, visited.copy())
+            # Update the merged environment with the parent's environment
+            # Later parents can override earlier ones if there are conflicts
+            merged_env.update(parent_env)
+
+        # Execute this node with the merged environment
+        result = self._execute_single_box(box['content'], merged_env)
+
+        # Cache the result
+        self.execution_cache[node_id] = result
+
+        # Remove from visited set
+        visited.remove(node_id)
+
+        return result
+
+    def _execute_single_box(self, code: str, env: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute code in a box with the given environment and return the updated environment."""
+        try:
+            # Execute the code in the environment
+            self._execute_code(code, env)
+            return env.copy()  # Return a copy to avoid unintended mutations
+        except Exception as e:
+            # Log the error but continue execution
+            print(f"Warning: Box execution failed: {str(e)}")
+            return env.copy()  # Return the unmodified environment
+
+    def _execute_box_code(self, code: str, env: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute the box code and return formatted results for the frontend."""
         try:
             stdout = io.StringIO()
             stderr = io.StringIO()
@@ -148,65 +222,3 @@ class CodeExecutor:
         # If we couldn't modify the code or it wasn't an expression, execute normally
         exec(code, env)
         return None
-
-    def execute_with_dependencies(self, box_id: str, code: str, boxes: List[Dict], arrows: List[Dict]) -> Dict[str, Any]:
-        """Execute code with dependencies determined from the DAG structure"""
-
-        # Build the graph
-        graph = {}
-        for box in boxes:
-            graph[box['id']] = []
-
-        # Add edges (parents of each node)
-        for arrow in arrows:
-            if arrow['end'] in graph:
-                graph[arrow['end']].append(arrow['start'])
-
-        # Perform topological sort
-        ancestor_ids = self._topological_sort(graph, box_id)
-
-        # Map ancestor IDs to Ancestor objects
-        ancestors = []
-        for ancestor_id in ancestor_ids:
-            for box in boxes:
-                if box['id'] == ancestor_id:
-                    ancestors.append(Ancestor(
-                        id=box['id'],
-                        content=box['content'],
-                        results=box.get('results')
-                    ))
-                    break
-
-        # Execute with the properly ordered ancestors
-        return self.execute(code, ancestors)
-
-    def _topological_sort(self, graph: Dict[str, List[str]], node_id: str) -> List[str]:
-        """Perform topological sort to get ancestors in execution order"""
-        visited = set()
-        temp = set()
-        result = []
-
-        def dfs(node):
-            if node in visited:
-                return True
-            if node in temp:
-                raise ValueError(f"Cycle detected in dependency graph at node {node}")
-
-            temp.add(node)
-
-            # Process all parents first
-            for parent in graph.get(node, []):
-                if not dfs(parent):
-                    return False
-
-            temp.remove(node)
-            visited.add(node)
-
-            # Add to result if it's not the target node
-            if node != node_id:
-                result.append(node)
-
-            return True
-
-        dfs(node_id)
-        return result
