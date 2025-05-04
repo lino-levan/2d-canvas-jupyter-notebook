@@ -271,6 +271,7 @@ function App() {
         id,
         type: "codeBox",
         position: { x, y },
+        dragHandle: ".node-drag-handle",
         data: {
           width: 500,
           height: 400,
@@ -553,6 +554,7 @@ function App() {
           id: box.id,
           type: "codeBox",
           position: { x: box.x, y: box.y },
+          dragHandle: ".node-drag-handle",
           data: {
             width: box.width,
             height: box.height,

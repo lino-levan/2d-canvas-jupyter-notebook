@@ -2,8 +2,8 @@
   "boxes": [
     {
       "id": "box-1745539245892",
-      "x": 2600.0,
-      "y": 1980.0,
+      "x": 2520.0,
+      "y": 1940.0,
       "width": 518.0,
       "height": 329.0,
       "content": "import time\n# New Python Code\nprint(\"Hiii, World!\")\n\nx = 1000\ny = 1\ntime.sleep(10)\nprint(x, \"hi\")",
@@ -69,7 +69,7 @@
       "content": "# Fetch Stock Data\nimport yfinance as tf\nimport pandas as pd\n\n# Get historical data for a tech stock\nticker = \"AAPL\"  # Apple stock\ndata = tf.download(ticker, start=\"2023-01-01\", end=\"2024-01-01\")\n\n# Show the first few rows\nprint(f\"Fetched {len(data)} days of {ticker} stock data\")\ndata.head()",
       "results": {
         "output": {
-          "text_output": "YF.download() has changed argument auto_adjust default to True\nFetched 0 days of AAPL stock data\n\nError: \r[*********************100%***********************]  1 of 1 completed\n\n1 Failed download:\n['AAPL']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')",
+          "text_output": "Fetched 0 days of AAPL stock data\n\nError: \r[*********************100%***********************]  1 of 1 completed\n\n1 Failed download:\n['AAPL']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')",
           "data": {
             "text/html": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead tr th {\n        text-align: left;\n    }\n\n    .dataframe thead tr:last-of-type th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr>\n      <th>Price</th>\n      <th>Adj Close</th>\n      <th>Close</th>\n      <th>High</th>\n      <th>Low</th>\n      <th>Open</th>\n      <th>Volume</th>\n    </tr>\n    <tr>\n      <th>Ticker</th>\n      <th>AAPL</th>\n      <th>AAPL</th>\n      <th>AAPL</th>\n      <th>AAPL</th>\n      <th>AAPL</th>\n      <th>AAPL</th>\n    </tr>\n    <tr>\n      <th>Date</th>\n      <th></th>\n      <th></th>\n      <th></th>\n      <th></th>\n      <th></th>\n      <th></th>\n    </tr>\n  </thead>\n  <tbody>\n  </tbody>\n</table>\n</div>",
             "text/plain": "Empty DataFrame\nColumns: [(Adj Close, AAPL), (Close, AAPL), (High, AAPL), (Low, AAPL), (Open, AAPL), (Volume, AAPL)]\nIndex: []"
@@ -139,10 +139,10 @@
     },
     {
       "id": "box-1745539247192-copy-1746327862123-847-copy-1746327863947-671",
-      "x": 1520.0,
-      "y": 1620.0,
+      "x": 1540.0,
+      "y": 1740.0,
       "width": 500.0,
-      "height": 400.0,
+      "height": 380.0,
       "content": "# New Python Code\nprint(\"Hello, World!\")\nprint(\"Hello, World!\")\nprint(\"Hello, World!\")\nprint(\"Hello, World!\")\nprint(\"Hello, World!\")\n",
       "results": {
         "output": "Hello, World!\nHello, World!\nHello, World!\nHello, World!\nHello, World!",

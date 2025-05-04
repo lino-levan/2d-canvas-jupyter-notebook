@@ -24,6 +24,7 @@ interface CodeBoxNodeProps {
 // Create a memoized component for better performance
 const CodeBoxNode = memo(({ id, data, selected }: CodeBoxNodeProps) => {
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  const nodeRef = useRef<HTMLDivElement>(null);
   const [content, setContent] = useState(
     data.content || '# New Python Code\nprint("Hello, World!")',
   );
@@ -72,7 +73,7 @@ const CodeBoxNode = memo(({ id, data, selected }: CodeBoxNodeProps) => {
   }, [data]);
 
   return (
-    <div className="relative">
+    <div className="relative" ref={nodeRef}>
       {/* Node Toolbar that appears when selected */}
       <NodeToolbar isVisible={selected} position={Position.Top}>
         <div className="flex bg-white border border-gray-200 rounded shadow-sm">
@@ -95,7 +96,7 @@ const CodeBoxNode = memo(({ id, data, selected }: CodeBoxNodeProps) => {
         handleClassName="h-3 w-3 bg-white border-2 border-blue-500 rounded"
         onResize={(_, params) => {
           data.onResize(params.width, params.height);
-          editorRef.current?.layout({ height: 10, width: 10 });
+          editorRef.current?.layout();
         }}
       />
 
@@ -104,8 +105,11 @@ const CodeBoxNode = memo(({ id, data, selected }: CodeBoxNodeProps) => {
         className="bg-white rounded-md shadow-md overflow-hidden border border-gray-200 flex flex-col"
         style={{ width: data.width, height: data.height }}
       >
-        {/* Node header */}
-        <div className="flex justify-between items-center py-2 px-3 bg-[#3498db] text-white">
+        {/* Node header - this is draggable */}
+        <div
+          className="node-drag-handle flex justify-between items-center py-2 px-3 bg-[#3498db] text-white"
+          style={{ cursor: "move" }}
+        >
           <div className="font-medium text-sm">Python Code</div>
           <div className="flex gap-1">
             <button
