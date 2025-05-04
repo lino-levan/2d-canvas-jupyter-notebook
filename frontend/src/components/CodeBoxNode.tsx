@@ -16,6 +16,7 @@ interface CodeBoxNodeProps {
     onExecute: (id: string, content: string) => void;
     onContentChange: (content: string) => void;
     onResize: (width: number, height: number) => void;
+    onEditorFocus?: (isFocused: boolean) => void;
   };
   selected: boolean;
 }
@@ -33,19 +34,42 @@ const CodeBoxNode = memo(({ id, data, selected }: CodeBoxNodeProps) => {
   }, [data.content]);
 
   // Handle editor content changes
-  const handleEditorChange = useCallback((value: string | undefined) => {
-    if (value !== undefined) {
-      setContent(value);
-      // Update the parent component's state
-      data.onContentChange(value);
-    }
-  }, [data]);
+  const handleEditorChange = useCallback(
+    (value: string | undefined) => {
+      if (value !== undefined) {
+        setContent(value);
+        // Update the parent component's state
+        data.onContentChange(value);
+      }
+    },
+    [data],
+  );
 
   // Execute the code
   const executeCode = useCallback(() => {
     data.onExecute(id, content);
     editorRef.current?.layout();
   }, [id, content, data]);
+
+  /**
+   * Handle editor focus event - notify parent component
+   * This prevents clipboard operations from interfering with text editing
+   */
+  const handleEditorFocus = useCallback(() => {
+    if (data.onEditorFocus) {
+      data.onEditorFocus(true);
+    }
+  }, [data]);
+
+  /**
+   * Handle editor blur event - notify parent component
+   * This re-enables clipboard operations for nodes
+   */
+  const handleEditorBlur = useCallback(() => {
+    if (data.onEditorFocus) {
+      data.onEditorFocus(false);
+    }
+  }, [data]);
 
   return (
     <div className="relative">
@@ -115,6 +139,8 @@ const CodeBoxNode = memo(({ id, data, selected }: CodeBoxNodeProps) => {
             onMount={(editor) => {
               editorRef.current = editor;
             }}
+            onFocus={handleEditorFocus}
+            onBlur={handleEditorBlur}
           />
         </div>
 

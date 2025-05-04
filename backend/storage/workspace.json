@@ -2,25 +2,13 @@
   "boxes": [
     {
       "id": "box-1745539245892",
-      "x": 2520.0,
-      "y": 2000.0,
+      "x": 2600.0,
+      "y": 1980.0,
       "width": 518.0,
       "height": 329.0,
-      "content": "import time\n# New Python Code\nprint(\"Hiii, World!\")\nx = 1000\ny = 1\ntime.sleep(10)\nprint(x, \"hi\")",
+      "content": "import time\n# New Python Code\nprint(\"Hiii, World!\")\n\nx = 1000\ny = 1\ntime.sleep(10)\nprint(x, \"hi\")",
       "results": {
         "output": "Hiii, World!\n1000",
-        "error": false
-      }
-    },
-    {
-      "id": "box-1745539247192",
-      "x": 1440.0,
-      "y": 1780.0,
-      "width": 500.0,
-      "height": 400.0,
-      "content": "# New Python Code\nprint(\"Hello, World!\")\nprint(\"Hello, World!\")\nprint(\"Hello, World!\")\nprint(\"Hello, World!\")\nprint(\"Hello, World!\")\n",
-      "results": {
-        "output": "Hello, World!\nHello, World!\nHello, World!\nHello, World!\nHello, World!",
         "error": false
       }
     },
@@ -81,10 +69,10 @@
       "content": "# Fetch Stock Data\nimport yfinance as tf\nimport pandas as pd\n\n# Get historical data for a tech stock\nticker = \"AAPL\"  # Apple stock\ndata = tf.download(ticker, start=\"2023-01-01\", end=\"2024-01-01\")\n\n# Show the first few rows\nprint(f\"Fetched {len(data)} days of {ticker} stock data\")\ndata.head()",
       "results": {
         "output": {
-          "text_output": "Fetched 250 days of AAPL stock data\n\nError: \r[*********************100%***********************]  1 of 1 completed",
+          "text_output": "YF.download() has changed argument auto_adjust default to True\nFetched 0 days of AAPL stock data\n\nError: \r[*********************100%***********************]  1 of 1 completed\n\n1 Failed download:\n['AAPL']: YFRateLimitError('Too Many Requests. Rate limited. Try after a while.')",
           "data": {
-            "text/html": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead tr th {\n        text-align: left;\n    }\n\n    .dataframe thead tr:last-of-type th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr>\n      <th>Price</th>\n      <th>Close</th>\n      <th>High</th>\n      <th>Low</th>\n      <th>Open</th>\n      <th>Volume</th>\n    </tr>\n    <tr>\n      <th>Ticker</th>\n      <th>AAPL</th>\n      <th>AAPL</th>\n      <th>AAPL</th>\n      <th>AAPL</th>\n      <th>AAPL</th>\n    </tr>\n    <tr>\n      <th>Date</th>\n      <th></th>\n      <th></th>\n      <th></th>\n      <th></th>\n      <th></th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <th>2023-01-03</th>\n      <td>123.632523</td>\n      <td>129.395510</td>\n      <td>122.742865</td>\n      <td>128.782641</td>\n      <td>112117500</td>\n    </tr>\n    <tr>\n      <th>2023-01-04</th>\n      <td>124.907707</td>\n      <td>127.181276</td>\n      <td>123.642420</td>\n      <td>125.431615</td>\n      <td>89113600</td>\n    </tr>\n    <tr>\n      <th>2023-01-05</th>\n      <td>123.583107</td>\n      <td>126.301500</td>\n      <td>123.326101</td>\n      <td>125.668857</td>\n      <td>80962700</td>\n    </tr>\n    <tr>\n      <th>2023-01-06</th>\n      <td>128.130219</td>\n      <td>128.792516</td>\n      <td>123.454587</td>\n      <td>124.561717</td>\n      <td>87754700</td>\n    </tr>\n    <tr>\n      <th>2023-01-09</th>\n      <td>128.654160</td>\n      <td>131.876702</td>\n      <td>128.397153</td>\n      <td>128.970489</td>\n      <td>70790800</td>\n    </tr>\n  </tbody>\n</table>\n</div>",
-            "text/plain": "Price            Close        High         Low        Open     Volume\nTicker            AAPL        AAPL        AAPL        AAPL       AAPL\nDate                                                                 \n2023-01-03  123.632523  129.395510  122.742865  128.782641  112117500\n2023-01-04  124.907707  127.181276  123.642420  125.431615   89113600\n2023-01-05  123.583107  126.301500  123.326101  125.668857   80962700\n2023-01-06  128.130219  128.792516  123.454587  124.561717   87754700\n2023-01-09  128.654160  131.876702  128.397153  128.970489   70790800"
+            "text/html": "<div>\n<style scoped>\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead tr th {\n        text-align: left;\n    }\n\n    .dataframe thead tr:last-of-type th {\n        text-align: right;\n    }\n</style>\n<table border=\"1\" class=\"dataframe\">\n  <thead>\n    <tr>\n      <th>Price</th>\n      <th>Adj Close</th>\n      <th>Close</th>\n      <th>High</th>\n      <th>Low</th>\n      <th>Open</th>\n      <th>Volume</th>\n    </tr>\n    <tr>\n      <th>Ticker</th>\n      <th>AAPL</th>\n      <th>AAPL</th>\n      <th>AAPL</th>\n      <th>AAPL</th>\n      <th>AAPL</th>\n      <th>AAPL</th>\n    </tr>\n    <tr>\n      <th>Date</th>\n      <th></th>\n      <th></th>\n      <th></th>\n      <th></th>\n      <th></th>\n      <th></th>\n    </tr>\n  </thead>\n  <tbody>\n  </tbody>\n</table>\n</div>",
+            "text/plain": "Empty DataFrame\nColumns: [(Adj Close, AAPL), (Close, AAPL), (High, AAPL), (Low, AAPL), (Open, AAPL), (Volume, AAPL)]\nIndex: []"
           }
         },
         "error": false
@@ -148,6 +136,18 @@
         "output": "Hello, World!\n10",
         "error": false
       }
+    },
+    {
+      "id": "box-1745539247192-copy-1746327862123-847-copy-1746327863947-671",
+      "x": 1520.0,
+      "y": 1620.0,
+      "width": 500.0,
+      "height": 400.0,
+      "content": "# New Python Code\nprint(\"Hello, World!\")\nprint(\"Hello, World!\")\nprint(\"Hello, World!\")\nprint(\"Hello, World!\")\nprint(\"Hello, World!\")\n",
+      "results": {
+        "output": "Hello, World!\nHello, World!\nHello, World!\nHello, World!\nHello, World!",
+        "error": false
+      }
     }
   ],
   "arrows": [
@@ -182,14 +182,14 @@
       "end": "box-1745548291246-350"
     },
     {
-      "id": "arrow-1745548697666-55",
-      "start": "box-1745539247192",
-      "end": "box-1745547805861-743"
-    },
-    {
       "id": "arrow-1746325376311-423",
       "start": "box-1745540411540",
       "end": "box-1745541056225"
+    },
+    {
+      "id": "arrow-1746327867808-556",
+      "start": "box-1745539247192-copy-1746327862123-847-copy-1746327863947-671",
+      "end": "box-1745547805861-743"
     }
   ]
 }
