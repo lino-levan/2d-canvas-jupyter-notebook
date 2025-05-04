@@ -6,3 +6,10 @@
 .react-flow__attribution {
   display: none !important;
 }
+.react-flow__edge {
+  &.selected {
+    path {
+      stroke-width: 2px;
+    }
+  }
+}

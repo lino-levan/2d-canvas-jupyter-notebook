@@ -2,7 +2,8 @@
 
 ![Screenshot](/screenshot.png)
 
-Imagine Jupyter but 2d. Yeah, that's what this is. Don't worry about all of the lint errors.
+Imagine Jupyter but 2d. Yeah, that's what this is. Don't worry about all of the
+lint errors.
 
 ## Running
 

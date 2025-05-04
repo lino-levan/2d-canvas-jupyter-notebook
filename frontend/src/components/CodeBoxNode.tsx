@@ -15,7 +15,7 @@ interface CodeBoxNodeProps {
     results: ResultsType;
     onExecute: (id: string, content: string) => void;
     onContentChange: (content: string) => void;
-    onResize: (width: number, height: number) => void; // Added this prop
+    onResize: (width: number, height: number) => void;
   };
   selected: boolean;
 }

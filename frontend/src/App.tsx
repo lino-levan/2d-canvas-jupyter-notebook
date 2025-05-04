@@ -193,36 +193,44 @@ function App() {
   }, [nodes, edges, loading]);
 
   // Handle connections between nodes
-  const onConnect = useCallback((params) => {
-    // Check for circular dependencies
-    if (
-      LinkingManager.isCircularDependency(params.source, params.target, edges)
-    ) {
-      setError("Cannot create circular dependency");
-      return;
-    }
+  const onConnect = useCallback(
+    (params) => {
+      // Check for circular dependencies
+      if (
+        LinkingManager.isCircularDependency(params.source, params.target, edges)
+      ) {
+        setError("Cannot create circular dependency");
+        return;
+      }
 
-    // Check for duplicate connections
-    if (LinkingManager.isDuplicateArrow(params.source, params.target, edges)) {
-      setError("Connection already exists");
-      return;
-    }
+      // Check for duplicate connections
+      if (
+        LinkingManager.isDuplicateArrow(params.source, params.target, edges)
+      ) {
+        setError("Connection already exists");
+        return;
+      }
 
-    // Add the new edge with our custom styling
-    setEdges((eds) =>
-      addEdge({
-        ...params,
-        type: "bezier",
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          width: 20,
-          height: 20,
-        },
-        style: { stroke: "#3498db" },
-        id: LinkingManager.createArrowId(),
-      }, eds)
-    );
-  }, [edges, setEdges]);
+      // Add the new edge with our custom styling
+      setEdges((eds) =>
+        addEdge(
+          {
+            ...params,
+            type: "bezier",
+            markerEnd: {
+              type: MarkerType.ArrowClosed,
+              width: 20,
+              height: 20,
+            },
+            style: { stroke: "#3498db" },
+            id: LinkingManager.createArrowId(),
+          },
+          eds,
+        )
+      );
+    },
+    [edges, setEdges],
+  );
 
   // Handle adding a new node on canvas click
   const onPaneClick = useCallback(
@@ -271,86 +279,94 @@ function App() {
   edgeRef.current = edges;
 
   // Execute code in a node
-  const handleExecuteCode = useCallback(async (boxId: string, code: string) => {
-    const nodes = nodeRef.current;
-    const edges = edgeRef.current;
-    console.log("HALFSASD", nodes, edges);
-    try {
-      const { executeCode } = await import("./hooks/useApi");
+  const handleExecuteCode = useCallback(
+    async (boxId: string, code: string) => {
+      const nodes = nodeRef.current;
+      const edges = edgeRef.current;
+      console.log("HALFSASD", nodes, edges);
+      try {
+        const { executeCode } = await import("./hooks/useApi");
 
-      // Get ancestors for this box
-      const boxNodes = nodes.map((node) => ({
-        id: node.id,
-        x: node.position.x,
-        y: node.position.y,
-        width: node.data.width,
-        height: node.data.height,
-        content: node.data.content,
-        results: node.data.results,
-      }));
+        // Get ancestors for this box
+        const boxNodes = nodes.map((node) => ({
+          id: node.id,
+          x: node.position.x,
+          y: node.position.y,
+          width: node.data.width,
+          height: node.data.height,
+          content: node.data.content,
+          results: node.data.results,
+        }));
 
-      const arrowConnections = edges.map((edge) => ({
-        id: edge.id,
-        start: edge.source,
-        end: edge.target,
-      }));
+        const arrowConnections = edges.map((edge) => ({
+          id: edge.id,
+          start: edge.source,
+          end: edge.target,
+        }));
 
-      const ancestors = LinkingManager.getAncestors(
-        boxId,
-        arrowConnections,
-        boxNodes,
-      );
-      const results = await executeCode(boxId, code, ancestors);
+        const ancestors = LinkingManager.getAncestors(
+          boxId,
+          arrowConnections,
+          boxNodes,
+        );
+        const results = await executeCode(boxId, code, ancestors);
 
-      // Update using functional state update
-      setNodes((prevNodes) =>
-        prevNodes.map((node) => {
-          if (node.id === boxId) {
-            return {
-              ...node,
-              data: {
-                ...node.data,
-                results,
-              },
-            };
-          }
-          return node;
-        })
-      );
-    } catch (err: any) {
-      console.error("Execution failed:", err);
-
-      // Also update this error handler with functional update
-      setNodes((prevNodes) =>
-        prevNodes.map((node) => {
-          if (node.id === boxId) {
-            return {
-              ...node,
-              data: {
-                ...node.data,
-                results: {
-                  error: true,
-                  output: err.message || "Execution failed",
+        // Update using functional state update
+        setNodes((prevNodes) =>
+          prevNodes.map((node) => {
+            if (node.id === boxId) {
+              return {
+                ...node,
+                data: {
+                  ...node.data,
+                  results,
                 },
-              },
-            };
-          }
-          return node;
-        })
-      );
-    }
-  }, [nodes, edges, setNodes]);
+              };
+            }
+            return node;
+          })
+        );
+      } catch (err: any) {
+        console.error("Execution failed:", err);
+
+        // Also update this error handler with functional update
+        setNodes((prevNodes) =>
+          prevNodes.map((node) => {
+            if (node.id === boxId) {
+              return {
+                ...node,
+                data: {
+                  ...node.data,
+                  results: {
+                    error: true,
+                    output: err.message || "Execution failed",
+                  },
+                },
+              };
+            }
+            return node;
+          })
+        );
+      }
+    },
+    [nodes, edges, setNodes],
+  );
 
   // Handle node deletion
-  const onNodesDelete = useCallback((deleted) => {
-    // Remove any edges connected to deleted nodes
-    setEdges((eds) =>
-      eds.filter(
-        (e) =>
-          !deleted.some((node) => node.id === e.source || node.id === e.target),
-      )
-    );
-  }, [setEdges]);
+  const onNodesDelete = useCallback(
+    (deleted) => {
+      // Remove any edges connected to deleted nodes
+      setEdges((eds) =>
+        eds.filter(
+          (e) =>
+            !deleted.some(
+              (node) => node.id === e.source || node.id === e.target,
+            ),
+        )
+      );
+    },
+    [setEdges],
+  );
 
   // Get info message based on current interaction mode
   const getModeInfoMessage = () => {
