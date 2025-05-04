@@ -70,6 +70,7 @@ function App() {
       if (
         LinkingManager.isCircularDependency(params.source, params.target, edges)
       ) {
+        console.log("Circular dependency detected");
         setError("Cannot create circular dependency");
         return;
       }
@@ -78,16 +79,18 @@ function App() {
       if (
         LinkingManager.isDuplicateArrow(params.source, params.target, edges)
       ) {
+        console.log("Connection already exists");
         setError("Connection already exists");
         return;
       }
+
+      console.log("Connecting nodes:", params.source, params.target);
 
       // Add the new edge with our custom styling
       setEdges((eds) =>
         addEdge(
           {
             ...params,
-            type: "bezier",
             markerEnd: {
               type: MarkerType.ArrowClosed,
               width: 20,
@@ -588,7 +591,6 @@ function App() {
           id: arrow.id,
           source: arrow.start,
           target: arrow.end,
-          type: "bezier",
           markerEnd: {
             type: MarkerType.ArrowClosed,
             width: 20,
